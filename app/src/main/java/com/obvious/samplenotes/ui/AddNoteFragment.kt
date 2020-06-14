@@ -17,6 +17,7 @@ import com.obvious.samplenotes.viewmodels.EventObserver
 import com.obvious.samplenotes.viewmodels.NotesViewModel
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_add_note.*
+import kotlinx.android.synthetic.main.fragment_note_details.*
 import javax.inject.Inject
 
 
@@ -30,6 +31,8 @@ class AddNoteFragment : DaggerFragment() {
 
     private lateinit var viewModel: NotesViewModel
 
+    private var isUpdate = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,11 +45,25 @@ class AddNoteFragment : DaggerFragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = viewModelProvider(viewModelFactory)
 
+        viewModel.noteDetails.observe(
+            this,
+            EventObserver {
+                etTitle.setText(it.title)
+                etContent.setText(it.content)
+                isUpdate = true
+                Log.d("isUpdate", "isUpdate")
+            }
+        )
+
         fabAddNote.setOnClickListener {
             val title = etTitle.text.toString()
             val content = etContent.text.toString()
-            Log.d("content ", content)
-            viewModel.saveNote(title, content)
+
+            if (isUpdate) {
+                viewModel.updateNote(title, content)
+            } else {
+                viewModel.saveNote(title, content)
+            }
             hideKeyboard()
         }
 

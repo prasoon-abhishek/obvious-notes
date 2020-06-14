@@ -36,7 +36,8 @@ class NotesAdapter(
         holder.itemView.findViewById<TextView>(R.id.tvTitle).text =
             notesList[position].title
         holder.itemView.findViewById<TextView>(R.id.tvTime).text =
-            DateUtils.getDate(notesList[position].time.toLong())
+            notesList[position].content
+//            DateUtils.getDate(notesList[position].time.toLong())
         holder.itemView.findViewById<CardView>(R.id.cvNote)
             .setOnClickListener {
                 onNoteClicked(notesList[position])

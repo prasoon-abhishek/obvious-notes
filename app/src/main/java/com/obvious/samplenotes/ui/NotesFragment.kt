@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -33,6 +35,7 @@ class NotesFragment : DaggerFragment() {
 
     private val notesList = arrayListOf<Note>()
 
+    private lateinit var notesAdapter: NotesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,7 +53,7 @@ class NotesFragment : DaggerFragment() {
             findNavController().navigate(R.id.addNoteFragment)
         }
 
-        val notesAdapter = NotesAdapter(notesList) { note ->
+         notesAdapter = NotesAdapter(notesList) { note ->
             viewModel.onNoteClicked(note)
         }
         rvNotes.layoutManager = LinearLayoutManager(activity!!)
@@ -67,12 +70,36 @@ class NotesFragment : DaggerFragment() {
             }
         )
 
-        viewModel.navigateToNoteDetails.observe(
+//        viewModel.navigateToNoteDetails.observe(
+//            this,
+//            EventObserver {
+//                findNavController().navigate(R.id.noteDetailsFragment)
+//            }
+//        )
+
+        viewModel.showDeleteUpdateAlert.observe(
             this,
-            EventObserver {
-                findNavController().navigate(R.id.noteDetailsFragment)
+            EventObserver{
+                showAlert()
             }
         )
+    }
+
+    private fun showAlert() {
+        val builder = AlertDialog.Builder(context!!)
+        builder.setMessage("Delete or Update")
+
+        builder.setPositiveButton("Delete"){dialogInterface, which ->
+            Toast.makeText(context!!,"clicked delete",Toast.LENGTH_LONG).show()
+            viewModel.removeNote()
+        }
+        builder.setNegativeButton("Update"){dialogInterface, which ->
+            Toast.makeText(context!!,"clicked Update",Toast.LENGTH_LONG).show()
+            findNavController().navigate(R.id.addNoteFragment)
+        }
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(true)
+        alertDialog.show()
     }
 
 }

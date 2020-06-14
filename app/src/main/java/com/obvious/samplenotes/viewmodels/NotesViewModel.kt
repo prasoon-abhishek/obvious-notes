@@ -20,6 +20,9 @@ class NotesViewModel @Inject constructor(
     private val repository: NoteRepository
 ) : ViewModel() {
 
+    private val _showDeleteUpdateAlert = MutableLiveData<Unit>()
+    val showDeleteUpdateAlert = _showDeleteUpdateAlert.event()
+
     private val _showError = MutableLiveData<String>()
     val showError = _showError.event()
 
@@ -73,15 +76,45 @@ class NotesViewModel @Inject constructor(
     }
 
     fun fetchNotes() {
-        Log.d("fetch notes Called", "")
         viewModelScope.launch {
             _notesList.value = repository.dao.getNotes()
         }
     }
 
     fun onNoteClicked(note: Note) {
-        _navigateToNoteDetails.value = Unit
+//        _navigateToNoteDetails.value = Unit
+        _showDeleteUpdateAlert.value = Unit
         _noteDetails.value = note
+    }
+
+    fun removeNote() {
+        viewModelScope.launch {
+            repository.dao.deleteNote(_noteDetails.value!!)
+            fetchNotes()
+        }
+    }
+
+    fun updateNote(title: String, content: String) {
+        if (title.isEmpty()) {
+            _showError.value = "Title Can't Be Empty"
+            return
+        }
+        if (content.isEmpty()) {
+            _showError.value = "Content Can't Be Empty"
+            return
+        }
+        viewModelScope.launch {
+            val note = Note(
+                _noteDetails.value!!.id,
+                title,
+                content,
+                System.currentTimeMillis().toString()
+            )
+            repository.dao.updateNote(note)
+            _showToast.value = "Note Updated"
+            navigateToNotes()
+            fetchNotes()
+        }
     }
 
 }

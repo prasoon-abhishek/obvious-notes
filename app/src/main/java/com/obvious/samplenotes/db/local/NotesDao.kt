@@ -1,9 +1,6 @@
 package com.obvious.samplenotes.db.local
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.obvious.samplenotes.models.Note
 
 /**
@@ -16,4 +13,10 @@ interface NotesDao {
 
     @Query("SELECT * FROM note ORDER BY id DESC")
     suspend fun getNotes(): List<Note>
+
+    @Delete
+    suspend fun deleteNote(note: Note)
+
+    @Update
+    suspend fun updateNote(note: Note)
 }
