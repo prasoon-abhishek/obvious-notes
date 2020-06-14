@@ -90,17 +90,18 @@ class NotesViewModel @Inject constructor(
     fun removeNote() {
         viewModelScope.launch {
             repository.dao.deleteNote(_noteDetails.value!!)
+            _showToast.value = "User Deleted"
             fetchNotes()
         }
     }
 
     fun updateNote(title: String, content: String) {
         if (title.isEmpty()) {
-            _showError.value = "Title Can't Be Empty"
+            _showError.value = "Name Can't Be Empty"
             return
         }
         if (content.isEmpty()) {
-            _showError.value = "Content Can't Be Empty"
+            _showError.value = "Email Can't Be Empty"
             return
         }
         viewModelScope.launch {
@@ -111,7 +112,7 @@ class NotesViewModel @Inject constructor(
                 System.currentTimeMillis().toString()
             )
             repository.dao.updateNote(note)
-            _showToast.value = "Note Updated"
+            _showToast.value = "User Updated"
             navigateToNotes()
             fetchNotes()
         }

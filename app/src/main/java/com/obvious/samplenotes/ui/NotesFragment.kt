@@ -89,12 +89,10 @@ class NotesFragment : DaggerFragment() {
         val builder = AlertDialog.Builder(context!!)
         builder.setMessage("Delete or Update")
 
-        builder.setPositiveButton("Delete"){dialogInterface, which ->
-            Toast.makeText(context!!,"clicked delete",Toast.LENGTH_LONG).show()
+        builder.setPositiveButton("Delete"){_, which ->
             viewModel.removeNote()
         }
-        builder.setNegativeButton("Update"){dialogInterface, which ->
-            Toast.makeText(context!!,"clicked Update",Toast.LENGTH_LONG).show()
+        builder.setNegativeButton("Update"){_, which ->
             findNavController().navigate(R.id.addNoteFragment)
         }
         val alertDialog: AlertDialog = builder.create()
